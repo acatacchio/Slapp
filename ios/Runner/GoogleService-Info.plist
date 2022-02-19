@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>851407529499-9l5k7jjqqdar9ti5qtibfi2luu3s0e6j.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.851407529499-9l5k7jjqqdar9ti5qtibfi2luu3s0e6j</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBRDohlN8wM-9qRmGkSVcZrbSfZWfER-LQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>851407529499</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>fr.catacchio.slapp</string>
+	<key>PROJECT_ID</key>
+	<string>slapp-f210d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>slapp-f210d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:851407529499:ios:d24879038642531bb83abe</string>
+</dict>
+</plist>

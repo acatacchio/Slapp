@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "851407529499",
+    "project_id": "slapp-f210d",
+    "storage_bucket": "slapp-f210d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851407529499:android:1961d89b98a7eab4b83abe",
+        "android_client_info": {
+          "package_name": "fr.catacchio.slapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "851407529499-khtidn567e52jtf3dh2oqao28ig4rnc1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWt9MnLJReVka-8z0hm6-DJ3EO39NNz70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "851407529499-khtidn567e52jtf3dh2oqao28ig4rnc1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
