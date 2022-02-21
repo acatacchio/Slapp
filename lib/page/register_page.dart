@@ -50,7 +50,7 @@ class RegisterState extends State<RegisterPage> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.userChanges(),
       builder: (BuildContext context, snapshot) {
-        return (snapshot.hasData) ? const MainController() : uIRegisterPage();
+        return (snapshot.hasData) ? MainController(memberUid: snapshot.data?.uid) : uIRegisterPage();
       },
     );
   }

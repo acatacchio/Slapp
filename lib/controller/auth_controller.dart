@@ -45,7 +45,7 @@ class AuthState extends State<AuthController> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.userChanges(),
       builder: (BuildContext context, snapshot) {
-        return (snapshot.hasData) ? const MainController() : uiAuthPage();
+        return (snapshot.hasData) ? MainController(memberUid: snapshot.data?.uid) : uiAuthPage();
       },
     );
   }
