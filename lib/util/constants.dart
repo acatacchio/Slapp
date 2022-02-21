@@ -28,3 +28,5 @@ Icon friendsIcon = const Icon(Icons.search_outlined);
 Icon writePost = const Icon(Icons.add_box_outlined, size: 35,);
 Icon organizationIcon = const Icon(Icons.group);
 Icon profileIcon = const Icon(Icons.account_circle_outlined);
+Icon cameraIcon = const Icon(Icons.camera_alt_outlined);
+Icon libraryIcon = const Icon(Icons.photo_library_outlined);
