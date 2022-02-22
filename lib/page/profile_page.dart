@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:slapp/controller/main_controller.dart';
 import 'package:slapp/model/color_theme.dart';
-import 'package:slapp/tile/post_tile.dart';
+import 'package:slapp/page/personal_fil.dart';
 import 'package:slapp/util/firebase_handler.dart';
 import '../custom_widget/my_gradient.dart';
 import '../model/Member.dart';
@@ -168,12 +169,18 @@ class ProfileState extends State<ProfilePage> {
         decoration: MyGradient(startColor: ColorTheme().blueGradiant(), endColor: ColorTheme().blue(), diagonal: true, radius: 35),
         child: Padding(
           padding: const EdgeInsets.all(2),
-          child: ClipRRect(
+          child: Container(
+            decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(35)),
-              child: Image(image: (urlString != null && urlString != "")
-                  ? CachedNetworkImageProvider(urlString)
-                  : AssetImage(logoImage) as ImageProvider, fit: BoxFit.cover,)
-          ),
+              color: ColorTheme().background(),
+            ),
+            child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(35)),
+                child: Image(image: (urlString != null && urlString != "")
+                    ? CachedNetworkImageProvider(urlString)
+                    : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover,)
+            ),
+          )
         )
       );
   }
@@ -183,20 +190,21 @@ class ProfileState extends State<ProfilePage> {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemBuilder: (BuildContext context, int index){
         return Padding(
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.all(1),
           child: InkWell(
-            onTap: (){
-              print("Vers fil du profile");
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: CachedNetworkImageProvider(Post(snapshots![index]).imageUrl),
-                      fit: BoxFit.cover
-                  )
+              onTap: (){
+                final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: snapshots, member: widget.member));
+                Navigator.push(context, route);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: CachedNetworkImageProvider(Post(snapshots![index]).imageUrl),
+                        fit: BoxFit.cover
+                    )
+                ),
               ),
-            ),
-          )
+            )
         );
       },
       itemCount: snapshots!.length,

@@ -12,8 +12,8 @@ class Post {
   late List<dynamic> likes;
   late List<dynamic> comments;
 
-  Post(DocumentSnapshot snapshot) {
-    ref = snapshot.reference;
+  Post(DocumentSnapshot? snapshot) {
+    ref = snapshot!.reference;
     documentId = snapshot.id;
     Map<String, dynamic>? datas = snapshot.data() as Map<String, dynamic>?;
     memberId = datas![uidKey];

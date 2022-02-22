@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:slapp/model/color_theme.dart';
 import 'package:slapp/page/organization_page.dart';
+import 'package:slapp/page/personal_fil.dart';
 import 'package:slapp/page/write_post.dart';
 import '../custom_widget/bar_item.dart';
 import '../custom_widget/my_gradient.dart';

@@ -1,5 +1,6 @@
 //FirebaseKeys
 import 'package:flutter/material.dart';
+import 'package:slapp/model/color_theme.dart';
 
 String uidKey = "uid";
 String nameKey = "name";
@@ -30,3 +31,6 @@ Icon organizationIcon = const Icon(Icons.group);
 Icon profileIcon = const Icon(Icons.account_circle_outlined);
 Icon cameraIcon = const Icon(Icons.camera_alt_outlined);
 Icon libraryIcon = const Icon(Icons.photo_library_outlined);
+Icon likeIcon = Icon(Icons.favorite, color: ColorTheme().textGrey(),size: 20,);
+Icon unlikeIcon = Icon(Icons.favorite_border, color: ColorTheme().textGrey(),size: 20,);
+Icon commentIcon = Icon(Icons.message_rounded, color: ColorTheme().textGrey(),size: 20,);
