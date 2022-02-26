@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:slapp/custom_widget/header_post.dart';
 import 'package:slapp/custom_widget/post_content.dart';
 import 'package:slapp/model/color_theme.dart';
 import '../model/Member.dart';

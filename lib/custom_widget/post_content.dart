@@ -7,7 +7,6 @@ import '../model/post.dart';
 import '../util/constants.dart';
 import '../util/date_handler.dart';
 import '../util/firebase_handler.dart';
-import 'my_gradient.dart';
 
 class PostContent extends StatelessWidget {
 

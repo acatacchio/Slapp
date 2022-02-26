@@ -19,10 +19,14 @@ import 'loading_controller.dart';
 class MainController extends StatefulWidget {
 
   String? memberUid;
+  bool edit;
+  int? index;
 
   MainController({
     Key? key,
-    required this.memberUid
+    required this.memberUid,
+    this.edit = false,
+    this.index
   }) : super(key: key);
 
   @override
@@ -56,6 +60,9 @@ class MainState extends State<MainController> {
 
   @override
   Widget build(BuildContext context) {
+    if(widget.index != null){
+      buttonSelected(widget.index);
+    }
     return (member == null)
       ? const LoadingController()
       : Scaffold(
@@ -95,9 +102,9 @@ class MainState extends State<MainController> {
       );
     }
 
-  buttonSelected(int index) {
+  buttonSelected(int? index) {
     setState(() {
-      this.index = index;
+      this.index = index!;
     });
   }
 

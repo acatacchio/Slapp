@@ -92,4 +92,17 @@ class FirebaseHandler {
     return fire_user.doc(uid).collection("post").snapshots();
   }
 
+  modifyMember(Map<String, dynamic> map, String? uid) {
+    fire_user.doc(uid).update(map);
+  }
+
+  modifyPicture(File file) {
+    String uid = authInstance.currentUser!.uid;
+    final ref = storageRef.child(uid);
+    addImageToStorage(ref, file).then((value) {
+      Map<String, dynamic> newMap = {imageUrlKey: value};
+      modifyMember(newMap, uid);
+    });
+  }
+
 }

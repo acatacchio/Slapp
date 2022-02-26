@@ -5,12 +5,12 @@ import 'package:slapp/model/color_theme.dart';
 import 'package:slapp/model/generic_method.dart';
 import 'package:slapp/page/register_page.dart';
 import 'package:slapp/util/images.dart';
-
 import '../model/alert_helper.dart';
 import '../util/firebase_handler.dart';
 import 'main_controller.dart';
 
 class AuthController extends StatefulWidget {
+
   const AuthController({Key? key}) : super(key: key);
 
   @override

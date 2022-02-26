@@ -8,7 +8,7 @@ class MyTextField extends TextField{
     TextInputType type = TextInputType.text,
     Icon? icon,
     bool obscure = false,
-    String hint = ""
+    String? hint = ""
   }):super(key: key,
     controller: controller,
     keyboardType: type,

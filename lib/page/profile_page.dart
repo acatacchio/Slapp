@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:slapp/controller/main_controller.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:slapp/model/color_theme.dart';
 import 'package:slapp/page/personal_fil.dart';
 import 'package:slapp/util/firebase_handler.dart';
@@ -9,6 +11,7 @@ import '../custom_widget/my_gradient.dart';
 import '../model/Member.dart';
 import '../model/alert_helper.dart';
 import '../model/post.dart';
+import '../util/constants.dart';
 import '../util/images.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -23,11 +26,18 @@ class ProfilePage extends StatefulWidget {
 class ProfileState extends State<ProfilePage> {
 
   late bool isMe;
+  bool edit = false;
+  TextEditingController? _name;
+  TextEditingController? _surname;
+  TextEditingController? _description;
 
   @override
   void initState() {
     final authId = FirebaseHandler().authInstance.currentUser!.uid;
     isMe = (authId == widget.member!.uid);
+    _name = TextEditingController();
+    _surname = TextEditingController();
+    _description = TextEditingController();
     super.initState();
   }
 
@@ -57,9 +67,35 @@ class ProfileState extends State<ProfilePage> {
                         ],
                       ),
                       const SizedBox(height: 15,),
-                      Text("${widget.member?.name} ${widget.member?.surname}", style: TextStyle(color: ColorTheme().text()),),
+                      InkWell(
+                        onTap: (edit)
+                            ? () => updateUser()
+                            : () => {},
+                        child: Row(
+                          children: [
+                            const Spacer(),
+                            (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
+                            Text("${widget.member?.name} ${widget.member?.surname} ", style: TextStyle(color: ColorTheme().text()),),
+                            (edit) ? Icon(Icons.border_color, color: ColorTheme().text(), size: 15) : const Spacer(),
+                            const Spacer()
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 15,),
-                      Text(widget.member?.description ?? "Aucune description", style: TextStyle(color: ColorTheme().textGrey()),),
+                      InkWell(
+                        onTap: (edit)
+                            ? () => updateUser()
+                            : () => {},
+                        child: Row(
+                          children: [
+                            const Spacer(),
+                            (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
+                            Text(widget.member?.description ?? "Aucune description ", style: TextStyle(color: ColorTheme().textGrey()),),
+                            (edit) ? Icon(Icons.border_color, color: ColorTheme().textGrey(), size: 15,) : const Spacer(),
+                            const Spacer()
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 15,),
                       Container(
                         child: (!isMe) ? Row(
@@ -78,7 +114,7 @@ class ProfileState extends State<ProfilePage> {
                                   diagonal: true,
                                 ),
                                 child: TextButton(
-                                  child: Text("Follow"),
+                                  child: const Text("Follow"),
                                   onPressed: () {
                                     //Follow
                                     print("Ajout de la personne au followers");
@@ -133,9 +169,13 @@ class ProfileState extends State<ProfilePage> {
       ? Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(height: 40, width: 40,),
+          (edit)
+          ? const SizedBox(height: 40, width: 40,)
+          : SizedBox(height: 40, width: 40, child: IconButton(onPressed: (){editPage();}, icon: const Icon(Icons.settings), color: ColorTheme().textGrey(),),),
           Text("${member.name} ${member.surname}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
-          SizedBox(height: 40, width: 40, child: IconButton(onPressed: (() => AlertHelper().disconnect(context)), icon: const Icon(Icons.settings), color: ColorTheme().textGrey(),),)
+          (edit)
+          ? SizedBox(height: 40, width: 40, child: IconButton(onPressed: (){saveEdit();}, icon: const Icon(Icons.check), color: ColorTheme().textGrey(),),)
+          : SizedBox(height: 40, width: 40, child: IconButton(onPressed: (){AlertHelper().disconnect(context);}, icon: const Icon(Icons.power_settings_new_rounded), color: ColorTheme().textGrey(),),)
         ],
       )
       : Text("${member.name} ${member.surname}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
@@ -162,27 +202,32 @@ class ProfileState extends State<ProfilePage> {
     );
   }
 
-  Container profileImage(urlString) {
-    return Container(
-        height: 100,
-        width: 100,
-        decoration: MyGradient(startColor: ColorTheme().blueGradiant(), endColor: ColorTheme().blue(), diagonal: true, radius: 35),
-        child: Padding(
-          padding: const EdgeInsets.all(2),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(35)),
-              color: ColorTheme().background(),
-            ),
-            child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(35)),
-                child: Image(image: (urlString != null && urlString != "")
-                    ? CachedNetworkImageProvider(urlString)
-                    : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover,)
-            ),
+  InkWell profileImage(urlString) {
+    return InkWell(
+      onTap: (edit)
+      ? () => takePicture()
+      : () => {},
+      child: Container(
+          height: 100,
+          width: 100,
+          decoration: MyGradient(startColor: ColorTheme().blueGradiant(), endColor: ColorTheme().blue(), diagonal: true, radius: 35),
+          child: Padding(
+              padding: const EdgeInsets.all(2),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(35)),
+                  color: ColorTheme().background(),
+                ),
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(35)),
+                    child: Image(image: (urlString != null && urlString != "")
+                        ? CachedNetworkImageProvider(urlString)
+                        : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover,)
+                ),
+              )
           )
-        )
-      );
+      ),
+    );
   }
 
   GridView posts(List<QueryDocumentSnapshot>? snapshots){
@@ -190,14 +235,19 @@ class ProfileState extends State<ProfilePage> {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemBuilder: (BuildContext context, int index){
         return Padding(
-          padding: const EdgeInsets.all(1),
+          padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
           child: InkWell(
               onTap: (){
-                final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: snapshots, member: widget.member));
-                Navigator.push(context, route);
+                if (!edit){
+                  final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: snapshots, member: widget.member));
+                  Navigator.push(context, route);
+                } else {
+                  print("Supprimer l'image avec une alert de confirmation");
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
+                  borderRadius: (edit) ? BorderRadius.circular(10) : BorderRadius.circular(0),
                     image: DecorationImage(
                         image: CachedNetworkImageProvider(Post(snapshots![index]).imageUrl),
                         fit: BoxFit.cover
@@ -209,5 +259,67 @@ class ProfileState extends State<ProfilePage> {
       },
       itemCount: snapshots!.length,
     );
+  }
+
+  saveEdit(){
+    setState(() {
+      edit = false;
+    });
+  }
+
+  editPage(){
+      setState(() {
+        edit = true;
+      });
+  }
+
+  updateUser() {
+    if (isMe) {
+      AlertHelper().changeUser(
+          context,
+          member: widget.member,
+          name: _name,
+          surname: _surname,
+          description: _description
+      );
+    }
+  }
+
+  takePicture(){
+    if (isMe) {
+      showModalBottomSheet(context: context, builder: (BuildContext ctx) {
+        return Container(
+          color: Colors.transparent,
+          child: Card(
+            elevation: 7,
+            margin: const EdgeInsets.all(15),
+            child: Container(
+              color: ColorTheme().background(),
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text("Modifier la photo de profil"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      IconButton(onPressed: (() => picker(ImageSource.camera)), icon: cameraIcon),
+                      IconButton(onPressed: (() => picker(ImageSource.gallery)), icon: libraryIcon)
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      });
+    }
+  }
+
+  picker(ImageSource source) async {
+    final f = await ImagePicker().pickImage(source: source, maxWidth: 500, maxHeight: 500);
+    final File file = File(f!.path);
+    FirebaseHandler().modifyPicture(file);
   }
 }
