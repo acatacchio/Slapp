@@ -119,4 +119,28 @@ class AlertHelper {
           );
         });
   }
+
+  Future<void> deletePost(BuildContext context, ref) async {
+    bool isiOS = (Theme.of(context).platform == TargetPlatform.iOS);
+    const title = Text("Voulez vous vraiment supprimer le post ?");
+    return showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          return (isiOS)
+              ? CupertinoAlertDialog(title: title, actions: [close(ctx, "Non"), deleteButton(context, ref)], )
+              : AlertDialog(title: title, actions: [close(ctx, "Non"), deleteButton(context, ref)],);
+        }
+    );
+  }
+
+  TextButton deleteButton(BuildContext context, ref){
+    return TextButton(
+        onPressed: (){
+          Navigator.pop(context);
+          //Firebase delete post
+          FirebaseHandler().deletePost(ref);
+        },
+        child: const Text("Oui", style: TextStyle(color: Colors.red),)
+    );
+  }
 }

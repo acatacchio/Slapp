@@ -22,6 +22,7 @@ String typeKey = "type";
 String like = "Like";
 String follow = "Follow";
 String comment = "Comment";
+String showPost = "ShowPost";
 
 
 Icon homeIcon = const Icon(Icons.house_rounded);

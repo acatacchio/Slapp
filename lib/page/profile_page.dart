@@ -217,47 +217,63 @@ class ProfileState extends State<ProfilePage> {
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(35)),
                   color: ColorTheme().background(),
-                ),
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(35)),
-                    child: Image(image: (urlString != null && urlString != "")
+                  image: DecorationImage(
+                    image: (urlString != null && urlString != "")
                         ? CachedNetworkImageProvider(urlString)
-                        : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover,)
+                        : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover,),
+                  ),
+                  child: (edit)
+                  ? Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(35)),
+                        color: Color.fromRGBO(0, 0, 0, 0.5)
+                    ),
+                    child: Icon(Icons.add_a_photo_outlined, color: ColorTheme().text(),),
+                  ) : null
                 ),
               )
           )
-      ),
-    );
+      );
   }
 
   GridView posts(List<QueryDocumentSnapshot>? snapshots){
+    List<QueryDocumentSnapshot> listPosts = [];
+    snapshots?.forEach((element) {
+      if(element[showPost] == true) {
+        listPosts.add(element);
+      }
+    });
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemBuilder: (BuildContext context, int index){
-        return Padding(
-          padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
-          child: InkWell(
-              onTap: (){
-                if (!edit){
-                  final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: snapshots, member: widget.member));
-                  Navigator.push(context, route);
-                } else {
-                  print("Supprimer l'image avec une alert de confirmation");
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: (edit) ? BorderRadius.circular(10) : BorderRadius.circular(0),
-                    image: DecorationImage(
-                        image: CachedNetworkImageProvider(Post(snapshots![index]).imageUrl),
-                        fit: BoxFit.cover
-                    )
+        return RotationTransition(
+          turns: (edit) ? const AlwaysStoppedAnimation(2 / 360) : const AlwaysStoppedAnimation(0 / 360),
+          child: Padding(
+              padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
+              child: InkWell(
+                onTap: (){
+                  if (!edit){
+                    final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: widget.member));
+                    Navigator.push(context, route);
+                  } else {
+                    AlertHelper().deletePost(context, snapshots![index].id);
+                  }
+                },
+                child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: (edit) ? BorderRadius.circular(10) : BorderRadius.circular(0),
+                        image: DecorationImage(
+                            image: CachedNetworkImageProvider(Post(listPosts[index]).imageUrl),
+                            fit: BoxFit.cover
+                        )
+                    ),
+                    child: (edit) ? Padding(padding: const EdgeInsets.all(2), child: Column(children: [const Spacer(), Row(children: const [Spacer(), Icon(Icons.delete_forever_rounded, color: Colors.redAccent,),],)],),) : null
                 ),
-              ),
-            )
+              )
+          ),
         );
       },
-      itemCount: snapshots!.length,
+      itemCount: listPosts.length,
     );
   }
 

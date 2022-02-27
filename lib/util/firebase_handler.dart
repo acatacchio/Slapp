@@ -66,6 +66,7 @@ class FirebaseHandler {
       likeKey: likes,
       commentKey: comments,
       dateKey: date,
+      showPost: true
     };
 
     if (text != null && text != "") {
@@ -103,6 +104,14 @@ class FirebaseHandler {
       Map<String, dynamic> newMap = {imageUrlKey: value};
       modifyMember(newMap, uid);
     });
+  }
+
+  deletePost(ref) async {
+    String uid = authInstance.currentUser!.uid;
+    Map<String, dynamic> newMap = {showPost: false};
+    //fire_user.doc(uid).update(newMap);
+    fire_user.doc(uid).collection("post").doc(ref).update(newMap);
+    print("Suppression du post");
   }
 
 }
