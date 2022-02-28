@@ -32,7 +32,7 @@ class FirebaseHandler {
       nameKey: name,
       surnameKey: surname,
       imageUrlKey: "",
-      followersKey: [user?.uid],
+      followersKey: [],
       followingKey: [],
       uidKey: user?.uid
     };

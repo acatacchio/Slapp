@@ -70,7 +70,7 @@ class MemberState extends State<MemberPage> {
                                   onPressed: (){
                                     FirebaseHandler().addOrRemoveFollow(member);
                                   },
-                                  child: Text((member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre")),
+                                  child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre"),
                                 )
                               ],
                             ),
