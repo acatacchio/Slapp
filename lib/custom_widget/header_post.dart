@@ -30,7 +30,7 @@ class HeaderPost extends InkWell {
                   image: DecorationImage(
                     image: (urlString != null && urlString != "")
                         ? CachedNetworkImageProvider(urlString)
-                        : AssetImage(avatar) as ImageProvider
+                        : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover
                   )
                 ),
               ),

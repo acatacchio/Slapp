@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
+import '../model/Member.dart';
 import 'constants.dart';
 
 class FirebaseHandler {
@@ -112,6 +113,20 @@ class FirebaseHandler {
     //fire_user.doc(uid).update(newMap);
     fire_user.doc(uid).collection("post").doc(ref).update(newMap);
     print("Suppression du post");
+  }
+
+  addOrRemoveFollow(Member? member) {
+    String myId = authInstance.currentUser!.uid;
+    DocumentReference myRef = fire_user.doc(myId);
+    if (member!.followers!.contains(myId)){
+      member.ref.update({followersKey: FieldValue.arrayRemove([myId])});
+      myRef.update({followingKey: FieldValue.arrayRemove([member.uid])});
+    } else {
+      member.ref.update({followersKey: FieldValue.arrayUnion([myId])});
+      myRef.update({followingKey: FieldValue.arrayUnion([member.uid])});
+      //Notif
+      //sendNotifTo(member.uid, authInstance.currentUser!.uid, "Vous suit désormais", fire_user.doc(authInstance.currentUser!.uid), follow);
+    }
   }
 
 }

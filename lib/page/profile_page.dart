@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slapp/model/color_theme.dart';
@@ -30,6 +32,9 @@ class ProfileState extends State<ProfilePage> {
   TextEditingController? _name;
   TextEditingController? _surname;
   TextEditingController? _description;
+  String myId = FirebaseHandler().authInstance.currentUser!.uid;
+  Member? member;
+  late StreamSubscription streamSubscription;
 
   @override
   void initState() {
@@ -38,125 +43,146 @@ class ProfileState extends State<ProfilePage> {
     _name = TextEditingController();
     _surname = TextEditingController();
     _description = TextEditingController();
+    streamSubscription = FirebaseHandler().fire_user.doc(widget.member?.uid).snapshots().listen((event) {
+      setState(() {
+        member = Member(event);
+      });
+    });
     super.initState();
   }
 
   @override
+  void dispose() {
+    streamSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return (isMe) ? page() : Scaffold(
+      backgroundColor: ColorTheme().background(),
+      body: SafeArea(
+        child: page(),
+      ),
+    );
+  }
+
+  page(){
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseHandler().postFrom(widget.member?.uid),
+      stream: FirebaseHandler().postFrom(member?.uid),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshots) {
         if (snapshots.hasData) {
           return Center(
-            child: Column(
-              children: [
-                appBar(widget.member),
-                SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10,),
-                      Row(
-                        children: [
-                          const Spacer(),
-                          follow(widget.member?.followers!.length, "Followers", CrossAxisAlignment.end),
-                          const SizedBox(width: 15,),
-                          profileImage(widget.member!.imageUrl),
-                          const SizedBox(width: 15,),
-                          follow(widget.member?.following!.length, "Following", CrossAxisAlignment.start),
-                          const Spacer(),
-                        ],
-                      ),
-                      const SizedBox(height: 15,),
-                      InkWell(
-                        onTap: (edit)
-                            ? () => updateUser()
-                            : () => {},
-                        child: Row(
+              child: Column(
+                children: [
+                  appBar(member),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10,),
+                        Row(
                           children: [
                             const Spacer(),
-                            (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
-                            Text("${widget.member?.name} ${widget.member?.surname} ", style: TextStyle(color: ColorTheme().text()),),
-                            (edit) ? Icon(Icons.border_color, color: ColorTheme().text(), size: 15) : const Spacer(),
-                            const Spacer()
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 15,),
-                      InkWell(
-                        onTap: (edit)
-                            ? () => updateUser()
-                            : () => {},
-                        child: Row(
-                          children: [
+                            follow(member?.followers!.length, "Followers", CrossAxisAlignment.end),
+                            const SizedBox(width: 15,),
+                            profileImage(member!.imageUrl),
+                            const SizedBox(width: 15,),
+                            follow(member?.following!.length, "Following", CrossAxisAlignment.start),
                             const Spacer(),
-                            (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
-                            Text(widget.member?.description ?? "Aucune description ", style: TextStyle(color: ColorTheme().textGrey()),),
-                            (edit) ? Icon(Icons.border_color, color: ColorTheme().textGrey(), size: 15,) : const Spacer(),
-                            const Spacer()
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 15,),
-                      Container(
-                        child: (!isMe) ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width / 2.2,
-                                decoration: MyGradient(
-                                  startColor: ColorTheme().blue(),
-                                  endColor: ColorTheme().blueGradiant(),
-                                  radius: 25,
-                                  diagonal: true,
-                                ),
-                                child: TextButton(
-                                  child: const Text("Follow"),
-                                  onPressed: () {
-                                    //Follow
-                                    print("Ajout de la personne au followers");
-                                  },
+                        const SizedBox(height: 15,),
+                        InkWell(
+                          onTap: (edit)
+                              ? () => updateUser()
+                              : () => {},
+                          child: Row(
+                            children: [
+                              const Spacer(),
+                              (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
+                              Text("${member?.name} ${member?.surname} ", style: TextStyle(color: ColorTheme().text()),),
+                              (edit) ? Icon(Icons.border_color, color: ColorTheme().text(), size: 15) : const Spacer(),
+                              const Spacer()
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 15,),
+                        InkWell(
+                          onTap: (edit)
+                              ? () => updateUser()
+                              : () => {},
+                          child: Row(
+                            children: [
+                              const Spacer(),
+                              (edit) ? Icon(Icons.check_box_outline_blank, color: ColorTheme().background(), size: 15,) : const Spacer(),
+                              Text(member?.description ?? "Aucune description ", style: TextStyle(color: ColorTheme().textGrey()),),
+                              (edit) ? Icon(Icons.border_color, color: ColorTheme().textGrey(), size: 15,) : const Spacer(),
+                              const Spacer()
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 15,),
+                        Container(
+                          child: (!isMe) ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Card(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                child: Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width / 2.2,
+                                  decoration: MyGradient(
+                                    startColor: ColorTheme().blue(),
+                                    endColor: ColorTheme().blueGradiant(),
+                                    radius: 25,
+                                    diagonal: true,
+                                  ),
+                                  child: TextButton(
+                                    child: Text((member!.followers!.contains(myId) ? "Unfollow" : "Follow")),
+                                    onPressed: () {
+                                      FirebaseHandler().addOrRemoveFollow(member);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                            Card(
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                              child: Container(
-                                height: 50,
-                                width: MediaQuery.of(context).size.width / 2.2,
-                                decoration: BoxDecoration(
-                                  color: ColorTheme().card(),
-                                  borderRadius: BorderRadius.circular(25),
-                                  border:  Border.all(width: 0, color: ColorTheme().card()),
-                                ),
-                                child: TextButton(
-                                  child: const Text("Message"),
-                                  onPressed: () {
-                                    //Vers message
-                                    print("Aller dans les messages");
-                                  },
+                              Card(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                child: Container(
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width / 2.2,
+                                  decoration: BoxDecoration(
+                                    color: ColorTheme().card(),
+                                    borderRadius: BorderRadius.circular(25),
+                                    border:  Border.all(width: 0, color: ColorTheme().card()),
+                                  ),
+                                  child: TextButton(
+                                    child: const Text("Message"),
+                                    onPressed: () {
+                                      //Vers message
+                                      print("Aller dans les messages");
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ):null,
-                      ),
-                      const SizedBox(height: 15,),
-                      Divider(color: ColorTheme().textGrey(),),
-                      SizedBox(height: 300, child: posts(snapshots.data?.docs),)
-                    ],
-                  ),
-                )
-              ],
-            )
+                            ],
+                          ):null,
+                        ),
+                        const SizedBox(height: 15,),
+                        Divider(color: ColorTheme().textGrey(),),
+                        (snapshots.data?.docs.length == 0)
+                            ? Center(child: Text("Aucun post pour l'instant", style: TextStyle(color: ColorTheme().textGrey()),),)
+                            : SizedBox(height: 300, child: posts(snapshots.data?.docs),)
+                      ],
+                    ),
+                  )
+                ],
+              )
           );
         } else {
-          return const Center(
-            child: Text("Aucun post pour l'instant"),
+          return Center(
+            child: Text("Aucun post pour l'instant", style: TextStyle(color: ColorTheme().textGrey()),),
           );
         }
       },
@@ -178,7 +204,14 @@ class ProfileState extends State<ProfilePage> {
           : SizedBox(height: 40, width: 40, child: IconButton(onPressed: (){AlertHelper().disconnect(context);}, icon: const Icon(Icons.power_settings_new_rounded), color: ColorTheme().textGrey(),),)
         ],
       )
-      : Text("${member.name} ${member.surname}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
+      : Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(height: 40, width: 40, child: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.arrow_back_ios_new_rounded ), color: ColorTheme().textGrey(),),),
+          Text("${member.name} ${member.surname}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
+          const SizedBox(height: 40, width: 40,)
+        ],
+      )
     );
   }
 
@@ -253,7 +286,7 @@ class ProfileState extends State<ProfilePage> {
               child: InkWell(
                 onTap: (){
                   if (!edit){
-                    final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: widget.member));
+                    final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: member));
                     Navigator.push(context, route);
                   } else {
                     AlertHelper().deletePost(context, snapshots![index].id);
@@ -293,7 +326,7 @@ class ProfileState extends State<ProfilePage> {
     if (isMe) {
       AlertHelper().changeUser(
           context,
-          member: widget.member,
+          member: member,
           name: _name,
           surname: _surname,
           description: _description
