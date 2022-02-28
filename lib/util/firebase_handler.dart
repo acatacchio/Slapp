@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
@@ -110,15 +109,13 @@ class FirebaseHandler {
   deletePost(ref) async {
     String uid = authInstance.currentUser!.uid;
     Map<String, dynamic> newMap = {showPost: false};
-    //fire_user.doc(uid).update(newMap);
     fire_user.doc(uid).collection("post").doc(ref).update(newMap);
-    print("Suppression du post");
   }
 
-  addOrRemoveFollow(Member? member) {
+  addOrRemoveFollow(Member member) {
     String myId = authInstance.currentUser!.uid;
     DocumentReference myRef = fire_user.doc(myId);
-    if (member!.followers!.contains(myId)){
+    if (member.followers!.contains(myId)){
       member.ref.update({followersKey: FieldValue.arrayRemove([myId])});
       myRef.update({followingKey: FieldValue.arrayRemove([member.uid])});
     } else {

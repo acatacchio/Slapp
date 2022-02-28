@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slapp/model/color_theme.dart';
+import 'package:slapp/page/member_list.dart';
 import 'package:slapp/page/personal_fil.dart';
 import 'package:slapp/util/firebase_handler.dart';
 import '../custom_widget/my_gradient.dart';
@@ -139,7 +140,7 @@ class ProfileState extends State<ProfilePage> {
                                   child: TextButton(
                                     child: Text((member!.followers!.contains(myId) ? "Unfollow" : "Follow"), style: TextStyle(color: ColorTheme().text()),),
                                     onPressed: () {
-                                      FirebaseHandler().addOrRemoveFollow(member);
+                                      FirebaseHandler().addOrRemoveFollow(member!);
                                     },
                                   ),
                                 ),
@@ -217,9 +218,9 @@ class ProfileState extends State<ProfilePage> {
     return InkWell(
       onTap: (){
         if (libelle == "Following") {
-          print("Liste des personnes suivie");
+          Navigator.push(context, MaterialPageRoute(builder: (_) => MemberList(title: "Abonnements", members: widget.member!.following,)));
         } else if (libelle == "Followers") {
-          print("Liste des followers");
+          Navigator.push(context, MaterialPageRoute(builder: (_) => MemberList(title: "Abonnés", members: widget.member!.followers,)));
         }
       },
       child: Column(

@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:slapp/controller/main_controller.dart';
 import 'package:slapp/custom_widget/my_gradient.dart';
 import 'package:slapp/page/profile_page.dart';
 import '../model/Member.dart';
@@ -70,7 +69,7 @@ class MemberState extends State<MemberPage> {
                                   onPressed: (){
                                     FirebaseHandler().addOrRemoveFollow(member);
                                   },
-                                  child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre"),
+                                  child: Text((member.followers != null)? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre"),
                                 )
                               ],
                             ),
