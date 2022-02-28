@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slapp/model/color_theme.dart';
@@ -139,7 +137,7 @@ class ProfileState extends State<ProfilePage> {
                                     diagonal: true,
                                   ),
                                   child: TextButton(
-                                    child: Text((member!.followers!.contains(myId) ? "Unfollow" : "Follow")),
+                                    child: Text((member!.followers!.contains(myId) ? "Unfollow" : "Follow"), style: TextStyle(color: ColorTheme().text()),),
                                     onPressed: () {
                                       FirebaseHandler().addOrRemoveFollow(member);
                                     },
@@ -158,7 +156,7 @@ class ProfileState extends State<ProfilePage> {
                                     border:  Border.all(width: 0, color: ColorTheme().card()),
                                   ),
                                   child: TextButton(
-                                    child: const Text("Message"),
+                                    child: Text("Message", style: TextStyle(color: ColorTheme().text())),
                                     onPressed: () {
                                       //Vers message
                                       print("Aller dans les messages");

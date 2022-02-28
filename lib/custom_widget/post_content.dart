@@ -12,13 +12,14 @@ class PostContent extends StatelessWidget {
 
   Post post;
   Member? member;
+  bool last;
 
-  PostContent({required this.post, required this.member});
+  PostContent({required this.post, required this.member, this.last = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: (last) ? const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 40) : const EdgeInsets.only(left: 10, right: 10, top: 10),
       child: Container(
         decoration: BoxDecoration(
           color: ColorTheme().card(),
