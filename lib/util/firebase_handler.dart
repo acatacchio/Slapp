@@ -16,13 +16,18 @@ class FirebaseHandler {
   final authInstance = FirebaseAuth.instance;
 
   //Connexion
-  Future<User?> signIn(String mail, String pwd) async {
-    final userCredential = await authInstance.signInWithEmailAndPassword(
-        email: mail,
-        password: pwd
-    );
-    final User? user = userCredential.user;
-    return user;
+  Future<User?> signIn(String mail, String pwd, context) async {
+    try {
+      final userCredential = await authInstance.signInWithEmailAndPassword(
+          email: mail,
+          password: pwd
+      );
+      final User? user = userCredential.user;
+      return user;
+    } on FirebaseAuthException catch (e) {
+      AlertHelper().showSnackBar(e.message!, context);
+    }
+
   }
 
   //Création User

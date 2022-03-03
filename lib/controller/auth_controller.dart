@@ -215,7 +215,7 @@ class AuthState extends State<AuthController> {
     _password.text = "";
 
     if ((validText(mail)) && (validText(pwd))) {
-        FirebaseHandler().signIn(mail, pwd);
+        FirebaseHandler().signIn(mail, pwd, context);
     }else{
       //alert pas de mail ou mdp
       AlertHelper().error(context, "Mot de passe ou mail invalide");

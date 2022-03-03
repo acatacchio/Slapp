@@ -60,7 +60,11 @@ class RegisterState extends State<RegisterPage> {
         backgroundColor: ColorTheme().background(),
         body: SingleChildScrollView(
           child: InkWell(
-              onTap: (){},
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: (){
+                GenericMethod().hideKeyboard(context);
+              },
               child: SafeArea(
                   child: Center(
                       child: Padding(
@@ -101,55 +105,55 @@ class RegisterState extends State<RegisterPage> {
                             MyTextField(controller: _password, hint: "Entrez votre mot de passe", obscure: true,),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
-                              height: 40,
+                              height: 150,
                             ),
-                            Text(
-                              "Ou connectez vous en utilisant vos comptes de",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: ColorTheme().textGrey()
-                              ),
-                            ),
-                            Text(
-                              "réseaux sociaux",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: ColorTheme().textGrey()
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: (){},
-                                  child: const Icon(Icons.facebook),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: ColorTheme().card(),
-                                    fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: (){},
-                                  child: Image.asset(logoApple, height: 30, width: 30,),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: ColorTheme().card(),
-                                    fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
-                                  ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: (){},
-                                  child: Image.asset(logoGoogle, height: 30, width: 30,),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: ColorTheme().card(),
-                                    fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            //Text(
+                            //  "Ou connectez vous en utilisant vos comptes de",
+                            //  style: TextStyle(
+                            //      fontSize: 15,
+                            //      color: ColorTheme().textGrey()
+                            //  ),
+                            //),
+                            //Text(
+                            //  "réseaux sociaux",
+                            //  style: TextStyle(
+                            //      fontSize: 15,
+                            //      color: ColorTheme().textGrey()
+                            //  ),
+                            //),
+                            //SizedBox(
+                            //  width: MediaQuery.of(context).size.width,
+                            //  height: 20,
+                            //),
+                            //Row(
+                            //  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //  children: [
+                            //    ElevatedButton(
+                            //      onPressed: (){},
+                            //      child: const Icon(Icons.facebook),
+                            //      style: ElevatedButton.styleFrom(
+                            //        primary: ColorTheme().card(),
+                            //        fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
+                            //      ),
+                            //    ),
+                            //    ElevatedButton(
+                            //      onPressed: (){},
+                            //      child: Image.asset(logoApple, height: 30, width: 30,),
+                            //      style: ElevatedButton.styleFrom(
+                            //        primary: ColorTheme().card(),
+                            //        fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
+                            //      ),
+                            //    ),
+                            //    ElevatedButton(
+                            //      onPressed: (){},
+                            //      child: Image.asset(logoGoogle, height: 30, width: 30,),
+                            //      style: ElevatedButton.styleFrom(
+                            //        primary: ColorTheme().card(),
+                            //        fixedSize: Size(MediaQuery.of(context).size.width/3.7, 50),
+                            //      ),
+                            //    ),
+                            //  ],
+                            //),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 30,
