@@ -143,4 +143,12 @@ class AlertHelper {
         child: const Text("Oui", style: TextStyle(color: Colors.red),)
     );
   }
+
+  showSnackBar(String text, context){
+    SnackBar snackBar = SnackBar(
+      content: Text(text),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

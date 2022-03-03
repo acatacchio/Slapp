@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
+import 'package:flutter/material.dart';
+import 'package:slapp/controller/auth_controller.dart';
+import 'package:slapp/model/alert_helper.dart';
 import '../model/Member.dart';
 import '../model/inside_notif.dart';
 import '../model/post.dart';
@@ -188,5 +191,18 @@ class FirebaseHandler {
     } else {
       return "$peerUid-$memberUid";
     }
+  }
+
+  resetPassword(String email, context) async {
+    try {
+      await authInstance.sendPasswordResetEmail(email: email);
+      AlertHelper().showSnackBar("E-mail de réinitialisation du mot de passe envoyé", context);
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } on FirebaseAuthException catch (e) {
+      AlertHelper().showSnackBar(e.message!, context);
+      Navigator.of(context).pop();
+    }
+
+
   }
 }

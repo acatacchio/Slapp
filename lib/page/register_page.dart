@@ -208,6 +208,11 @@ class RegisterState extends State<RegisterPage> {
     String mail = _mail.text;
     String pwd = _password.text;
 
+    _name.text = "";
+    _surname.text = "";
+    _mail.text = "";
+    _password.text = "";
+
     if ((validText(mail)) && (validText(pwd))) {
       if ((validText(name)) && (validText(surname))) {
         // methode vers firebase

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:slapp/custom_widget/my_text_field.dart';
 import 'package:slapp/model/color_theme.dart';
 import 'package:slapp/model/generic_method.dart';
+import 'package:slapp/page/forgot_password_page.dart';
 import 'package:slapp/page/register_page.dart';
 import 'package:slapp/util/images.dart';
 import '../model/alert_helper.dart';
@@ -55,6 +56,8 @@ class AuthState extends State<AuthController> {
       backgroundColor: ColorTheme().background(),
       body: SingleChildScrollView(
         child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             onTap: (){
               GenericMethod().hideKeyboard(context);
             },
@@ -89,7 +92,9 @@ class AuthState extends State<AuthController> {
                           Row(
                             children: [
                               TextButton(
-                                  onPressed: (){},
+                                  onPressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordPage()));
+                                  },
                                   child: const Text(
                                     "Mot de passe oublié ?",
                                     style: TextStyle(
@@ -206,6 +211,8 @@ class AuthState extends State<AuthController> {
     GenericMethod().hideKeyboard(context);
     String mail = _mail.text;
     String pwd = _password.text;
+    _mail.text = "";
+    _password.text = "";
 
     if ((validText(mail)) && (validText(pwd))) {
         FirebaseHandler().signIn(mail, pwd);
