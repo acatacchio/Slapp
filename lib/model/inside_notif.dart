@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluttersocial/util/constants.dart';
-import 'package:fluttersocial/util/date_handler.dart';
+import '../util/constants.dart';
+import '../util/date_handler.dart';
 
 class InsideNotif {
   late DocumentReference reference;

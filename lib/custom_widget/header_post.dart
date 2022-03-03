@@ -14,6 +14,8 @@ class HeaderPost extends InkWell {
     required date,
     double imageSize = 45})
     : super(key: key,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: onPressed,
       child: Row(
         children: [

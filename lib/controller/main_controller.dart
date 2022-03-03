@@ -1,7 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:slapp/model/color_theme.dart';
+import 'package:slapp/page/chat_page.dart';
+import 'package:slapp/page/list_talk.dart';
 import 'package:slapp/page/organization_page.dart';
 import 'package:slapp/page/write_post.dart';
 import '../custom_widget/bar_item.dart';
@@ -80,7 +81,7 @@ class MainState extends State<MainController> {
               BarItem(icon: homeIcon, onPressed: (() => buttonSelected(0)), selected: (index == 0), context: context,),
               BarItem(icon: friendsIcon, onPressed: (() => buttonSelected(1)), selected: (index == 1), context: context,),
               const SizedBox(width: 0, height: 0,),
-              BarItem(icon: organizationIcon, onPressed: (() => buttonSelected(2)), selected: (index == 2), context: context,),
+              BarItem(icon: chatIcon, onPressed: (() => buttonSelected(2)), selected: (index == 2), context: context,),
               BarItem(icon: profileIcon, onPressed: (() => buttonSelected(3)), selected: (index == 3), context: context,),
             ],
           ),
@@ -110,7 +111,7 @@ class MainState extends State<MainController> {
     switch (index) {
       case 0: return HomePage(member: member);
       case 1: return MemberPage(member: member);
-      case 2: return OrganizationPage(member: member);
+      case 2: return ListTalk(member: member);
       case 3: return ProfilePage(member: member);
     }
   }

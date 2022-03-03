@@ -19,16 +19,18 @@ String postIdKey = "PostId";
 String seenKey = "seen";
 String memberRef = "member";
 String typeKey = "type";
+String talksKey = "talks";
 String like = "Like";
 String follow = "Follow";
 String comment = "Comment";
-String showPost = "ShowPost";
+String showPostKey = "ShowPost";
 
 
 Icon homeIcon = const Icon(Icons.house_rounded);
 Icon friendsIcon = const Icon(Icons.search_outlined);
 Icon writePost = const Icon(Icons.add_box_outlined, size: 35,);
 Icon organizationIcon = const Icon(Icons.group);
+Icon chatIcon = const Icon(Icons.message_outlined);
 Icon profileIcon = const Icon(Icons.account_circle_outlined);
 Icon cameraIcon = const Icon(Icons.camera_alt_outlined);
 Icon libraryIcon = const Icon(Icons.photo_library_outlined);

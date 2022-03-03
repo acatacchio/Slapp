@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart' as storage;
 import '../model/Member.dart';
+import '../model/inside_notif.dart';
+import '../model/post.dart';
 import 'constants.dart';
 
 class FirebaseHandler {
@@ -47,7 +49,8 @@ class FirebaseHandler {
   //Database
   static final firestoreInstance = FirebaseFirestore.instance;
   final fire_user = firestoreInstance.collection(memberRef);
-  //final fire_notif = firestoreInstance.collection("notification");
+  final fire_notif = firestoreInstance.collection("notification");
+  final fire_chat = firestoreInstance.collection("chat");
 
   //Storage
   static final storageRef = storage.FirebaseStorage.instance.ref();
@@ -66,7 +69,7 @@ class FirebaseHandler {
       likeKey: likes,
       commentKey: comments,
       dateKey: date,
-      showPost: true
+      showPostKey: true
     };
 
     if (text != null && text != "") {
@@ -108,7 +111,7 @@ class FirebaseHandler {
 
   deletePost(ref) async {
     String uid = authInstance.currentUser!.uid;
-    Map<String, dynamic> newMap = {showPost: false};
+    Map<String, dynamic> newMap = {showPostKey: false};
     fire_user.doc(uid).collection("post").doc(ref).update(newMap);
   }
 
@@ -121,9 +124,69 @@ class FirebaseHandler {
     } else {
       member.ref.update({followersKey: FieldValue.arrayUnion([myId])});
       myRef.update({followingKey: FieldValue.arrayUnion([member.uid])});
-      //Notif
-      //sendNotifTo(member.uid, authInstance.currentUser!.uid, "Vous suit désormais", fire_user.doc(authInstance.currentUser!.uid), follow);
+      sendNotifTo(member.uid, authInstance.currentUser!.uid, "vous suit désormais", fire_user.doc(authInstance.currentUser!.uid), follow);
     }
   }
 
+  addOrRemoveLike(Post post, String? memberId) {
+    if (post.likes.contains(memberId)) {
+      post.ref.update({likeKey: FieldValue.arrayRemove([memberId])});
+    } else {
+      post.ref.update({likeKey: FieldValue.arrayUnion([memberId])});
+      sendNotifTo(post.memberId, authInstance.currentUser!.uid, "a aimé votre post", post.ref, like);
+    }
+  }
+
+  addComment(Post post, String text){
+    Map<String, dynamic> map = {
+      uidKey: authInstance.currentUser!.uid,
+      dateKey: DateTime.now().millisecondsSinceEpoch,
+      textKey: text
+    };
+    post.ref.update({commentKey: FieldValue.arrayUnion([map])});
+    sendNotifTo(post.memberId, authInstance.currentUser!.uid, "a commenté votre post", post.ref, comment);
+  }
+
+  sendNotifTo(String? to, String from, String text, DocumentReference ref, String type){
+    bool seen = false;
+    int date = DateTime.now().millisecondsSinceEpoch;
+    Map<String, dynamic> map = {
+      seenKey: seen,
+      dateKey: date,
+      textKey: text,
+      refKey: ref,
+      typeKey: type,
+      uidKey: from
+    };
+    fire_notif.doc(to).collection("InsideNotif").add(map);
+  }
+
+  seenNotif(InsideNotif notif) {
+    notif.reference.update({seenKey: true});
+  }
+
+  sendMessageTo(String? to, String? from, String text) {
+    if (text != null && text != "") {
+      bool seen = false;
+      int date = DateTime.now().millisecondsSinceEpoch;
+      Map<String, dynamic> map = {
+        seenKey: seen,
+        dateKey: date,
+        textKey: text,
+        uidKey: from
+      };
+
+      fire_chat.doc(getIdChat(from, to)).collection("talk").add(map);
+      fire_user.doc(from).update({talksKey: FieldValue.arrayUnion([to])});
+      fire_user.doc(to).update({talksKey: FieldValue.arrayUnion([from])});
+    }
+  }
+
+  getIdChat(String? memberUid, String? peerUid){
+    if (memberUid.hashCode <= peerUid.hashCode) {
+      return "$memberUid-$peerUid";
+    } else {
+      return "$peerUid-$memberUid";
+    }
+  }
 }

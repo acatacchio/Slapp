@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slapp/model/color_theme.dart';
+import 'package:slapp/page/chat_page.dart';
 import 'package:slapp/page/member_list.dart';
 import 'package:slapp/page/personal_fil.dart';
 import 'package:slapp/util/firebase_handler.dart';
@@ -16,9 +17,11 @@ import '../util/constants.dart';
 import '../util/images.dart';
 
 class ProfilePage extends StatefulWidget {
-  Member? member;
 
-  ProfilePage({Key? key, required this.member}) : super(key: key);
+  Member? member;
+  bool redirect;
+
+  ProfilePage({Key? key, required this.member, this.redirect = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ProfileState();
@@ -58,7 +61,7 @@ class ProfileState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return (isMe) ? page() : Scaffold(
+    return (isMe && !widget.redirect) ? page() : Scaffold(
       backgroundColor: ColorTheme().background(),
       body: SafeArea(
         child: page(),
@@ -92,6 +95,8 @@ class ProfileState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 15,),
                         InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: (edit)
                               ? () => updateUser()
                               : () => {},
@@ -107,6 +112,8 @@ class ProfileState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 15,),
                         InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: (edit)
                               ? () => updateUser()
                               : () => {},
@@ -160,7 +167,7 @@ class ProfileState extends State<ProfilePage> {
                                     child: Text("Message", style: TextStyle(color: ColorTheme().text())),
                                     onPressed: () {
                                       //Vers message
-                                      print("Aller dans les messages");
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => ChatPage(peer: member,)));
                                     },
                                   ),
                                 ),
@@ -190,7 +197,7 @@ class ProfileState extends State<ProfilePage> {
 
   Container appBar(member){
     return Container(
-      child: (isMe)
+      child: (isMe && !widget.redirect)
       ? Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -216,6 +223,8 @@ class ProfileState extends State<ProfilePage> {
 
   InkWell follow(nb, libelle, align){
     return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: (){
         if (libelle == "Following") {
           Navigator.push(context, MaterialPageRoute(builder: (_) => MemberList(title: "Abonnements", members: widget.member!.following,)));
@@ -236,6 +245,8 @@ class ProfileState extends State<ProfilePage> {
 
   InkWell profileImage(urlString) {
     return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: (edit)
       ? () => takePicture()
       : () => {},
@@ -271,7 +282,7 @@ class ProfileState extends State<ProfilePage> {
   GridView posts(List<QueryDocumentSnapshot>? snapshots){
     List<QueryDocumentSnapshot> listPosts = [];
     snapshots?.forEach((element) {
-      if(element[showPost] == true) {
+      if(element[showPostKey] == true) {
         listPosts.add(element);
       }
     });
@@ -283,6 +294,8 @@ class ProfileState extends State<ProfilePage> {
           child: Padding(
               padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
               child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 onTap: (){
                   if (!edit){
                     final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: member));

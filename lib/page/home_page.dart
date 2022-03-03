@@ -1,15 +1,13 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:slapp/custom_widget/header_post.dart';
-import 'package:slapp/util/date_handler.dart';
 import '../custom_widget/post_content.dart';
 import '../model/Member.dart';
 import '../model/color_theme.dart';
 import '../model/post.dart';
 import '../util/constants.dart';
 import '../util/firebase_handler.dart';
+import 'notif_page.dart';
 
 class HomePage extends StatefulWidget {
   Member? member;
@@ -51,9 +49,25 @@ class HomeState extends State<HomePage> {
               Text("Slapp", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
               SizedBox(height: 40, width: 40, child: IconButton(
                 onPressed: (){
-                  print("Ajout de la page notif");
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => NotifPage(member: widget.member,)));
                 },
-                icon: const Icon(Icons.notifications), color: ColorTheme().textGrey(),)
+                icon: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseHandler().fire_notif.doc(FirebaseHandler().authInstance.currentUser!.uid).collection("InsideNotif").snapshots(),
+                    builder: (context, snapshot) {
+                      bool unseenNotif = false;
+                      if(snapshot.hasData){
+                        final datas = snapshot.data!.docs;
+                        datas.forEach((element) {
+                          if(!element.get("seen")){
+                            unseenNotif = true;
+                          }
+                        });
+                        return (unseenNotif) ? Icon(Icons.notifications_active, color: ColorTheme().blueGradiant(),) : Icon(Icons.notifications, color: ColorTheme().textGrey(),);
+                      }else {
+                        return const Center(child: Text("Aucune notif"),);
+                      }
+                    })
+                )
               )
             ],
           )
@@ -65,9 +79,9 @@ class HomeState extends State<HomePage> {
               Post post = posts[index];
               Member member = members.singleWhere((element) => element.uid == post.memberId);
               if(posts.length - 1 == index){
-                return PostContent(post: post, member: member, last: true);
+                return (post.showPost) ? PostContent(post: post, member: member, last: true,) : const SizedBox(height: 40,);
               } else {
-                return PostContent(post: post, member: member);
+                return (post.showPost) ? PostContent(post: post, member: member) : const SizedBox();
               }
             },
             itemCount: posts.length,

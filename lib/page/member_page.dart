@@ -63,13 +63,13 @@ class MemberState extends State<MemberPage> {
                                     )
                                 ),
                                 const SizedBox(width: 10,),
-                                Text("${member.name} ${member.surname}"),
+                                Text("${member.name} ${member.surname}", style: TextStyle(color: ColorTheme().text()),),
                                 const Spacer(),
                                 TextButton(
                                   onPressed: (){
                                     FirebaseHandler().addOrRemoveFollow(member);
                                   },
-                                  child: Text((member.followers != null)? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre"),
+                                  child: Text((member.followers != null)? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre", style: TextStyle(color: (member.followers!.contains(myId)) ? ColorTheme().textGrey() : ColorTheme().blueGradiant()),),
                                 )
                               ],
                             ),

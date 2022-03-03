@@ -11,6 +11,7 @@ class Post {
   late int date;
   late List<dynamic> likes;
   late List<dynamic> comments;
+  late bool showPost;
 
   Post(DocumentSnapshot? snapshot) {
     ref = snapshot!.reference;
@@ -23,6 +24,7 @@ class Post {
     date = datas[dateKey];
     likes = datas[likeKey];
     comments = datas[commentKey];
+    showPost = datas[showPostKey];
   }
 
   Map<String, dynamic>toMap(){

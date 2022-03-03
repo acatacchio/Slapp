@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:slapp/custom_widget/header_post.dart';
+import 'package:slapp/page/comment_page.dart';
+import 'package:slapp/page/profile_page.dart';
 import '../model/Member.dart';
 import '../model/color_theme.dart';
 import '../model/post.dart';
@@ -30,7 +32,7 @@ class PostContent extends StatelessWidget {
             const SizedBox(height: 10,),
             SizedBox(
               width: MediaQuery.of(context).size.width *0.85,
-              child: HeaderPost(urlString: member!.imageUrl, onPressed: (){}, member: member, date: DateHandler().myDate(post.date), context: context),
+              child: HeaderPost(urlString: member!.imageUrl, onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage(member: member, redirect: true,)));}, member: member, date: DateHandler().myDate(post.date), context: context),
             ),
             const SizedBox(height: 10,),
             Container(
@@ -55,7 +57,7 @@ class PostContent extends StatelessWidget {
                         height: 35,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
-                            color: Color.fromRGBO(55, 55, 70, 1)
+                            color: const Color.fromRGBO(55, 55, 70, 1)
                         ),
                         child: TextButton(
                           child: Row(children: [
@@ -63,15 +65,23 @@ class PostContent extends StatelessWidget {
                             const SizedBox(width: 5,),
                             Text("${post.likes.length}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),)],),
                           onPressed: () {
-                            //Follow
-                            print("Ajout d'un like'");
+                            FirebaseHandler().addOrRemoveLike(post, FirebaseHandler().authInstance.currentUser!.uid);
                           },
                         ),
                       ),
                       const SizedBox(width: 10,),
-                      commentIcon,
-                      const SizedBox(width: 5,),
-                      Text("${post.comments.length}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),),
+                      SizedBox(
+                        height: 35,
+                        child: TextButton(
+                          child: Row(children: [
+                            commentIcon,
+                            const SizedBox(width: 5,),
+                            Text("${post.comments.length}", style: TextStyle(fontSize: 20, color: ColorTheme().textGrey()),)],),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => CommentPage(post: post, member: member,)));
+                          },
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10,),
@@ -92,40 +102,3 @@ class PostContent extends StatelessWidget {
     );
   }
 }
-
-//Column(
-//       children: [
-//         Row(
-//           children: [
-//             HeaderPost(urlString: member!.imageUrl, onPressed: (){}, context: context),
-//             Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text("${member?.surname} ${member?.name}"),
-//                 Text(DateHandler().myDate(post.date))
-//               ],
-//             ),
-//           ],
-//         ),
-//         const Divider(),
-//         (post.imageUrl != null && post.imageUrl != "")
-//             ? Padding(
-//             padding: const EdgeInsets.all(20),
-//               child: Container(
-//                 width: MediaQuery.of(context).size.width * 0.85,
-//                 height: MediaQuery.of(context).size.width * 0.85,
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(15),
-//                     image: DecorationImage(
-//                         image: CachedNetworkImageProvider(post.imageUrl),
-//                         fit: BoxFit.cover
-//                     )
-//                 ),
-//               )
-//             )
-//             : const SizedBox(height: 0, width: 0,),
-//         (post.text != null && post.text != "")
-//             ?
-//             : const SizedBox(height: 0, width: 0,),
-//       ],
-//     )

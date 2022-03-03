@@ -85,7 +85,7 @@ class MemberListState extends State<MemberList>{
               onPressed: (){
                 FirebaseHandler().addOrRemoveFollow(member);
               },
-              child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre"),
+              child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre", style: TextStyle(color: (member.followers!.contains(myId)) ? ColorTheme().textGrey() : ColorTheme().blueGradiant()),),
             )
           ],
         ),

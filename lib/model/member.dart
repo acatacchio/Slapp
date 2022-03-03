@@ -12,6 +12,7 @@ class Member {
   DocumentReference? documentId;
   late DocumentReference ref;
   String? description;
+  List<dynamic>? talks;
 
   Member(DocumentSnapshot snapshot) {
     ref = snapshot.reference;
@@ -23,6 +24,7 @@ class Member {
     followers = datas[followersKey];
     following = datas[followingKey];
     description = datas[descriptionKey];
+    talks = datas[talksKey];
   }
 
   Map<String, dynamic> toMap(){
@@ -34,6 +36,7 @@ class Member {
       followersKey: followers,
       followingKey: following,
       descriptionKey: description,
+      talksKey: talks,
     };
   }
 
