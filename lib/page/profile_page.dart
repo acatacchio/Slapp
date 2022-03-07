@@ -289,32 +289,29 @@ class ProfileState extends State<ProfilePage> {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemBuilder: (BuildContext context, int index){
-        return RotationTransition(
-          turns: (edit) ? const AlwaysStoppedAnimation(2 / 360) : const AlwaysStoppedAnimation(0 / 360),
-          child: Padding(
-              padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
-              child: InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: (){
-                  if (!edit){
-                    final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: member));
-                    Navigator.push(context, route);
-                  } else {
-                    AlertHelper().deletePost(context, snapshots![index].id);
-                  }
-                },
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: (edit) ? BorderRadius.circular(10) : BorderRadius.circular(0),
-                        image: DecorationImage(
-                            image: CachedNetworkImageProvider(Post(listPosts[index]).imageUrl),
-                            fit: BoxFit.cover
-                        )
-                    ),
-                    child: (edit) ? Padding(padding: const EdgeInsets.all(2), child: Column(children: [const Spacer(), Row(children: const [Spacer(), Icon(Icons.delete_forever_rounded, color: Colors.redAccent,),],)],),) : null
+        return Padding(
+          padding: (edit) ? const EdgeInsets.only(left: 2, right: 2, top: 1, bottom: 1) : const EdgeInsets.all(1),
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: (){
+              if (!edit){
+                final route = MaterialPageRoute(builder: (_) => PersonalFil(snapshots: listPosts, member: member));
+                Navigator.push(context, route);
+              } else {
+                AlertHelper().deletePost(context, snapshots![index].id);
+              }
+            },
+            child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: (edit) ? BorderRadius.circular(10) : BorderRadius.circular(0),
+                    image: DecorationImage(
+                        image: CachedNetworkImageProvider(Post(listPosts[index]).imageUrl),
+                        fit: BoxFit.cover
+                    )
                 ),
-              )
+                child: (edit) ? Padding(padding: const EdgeInsets.all(2), child: Column(children: [const Spacer(), Row(children: const [Spacer(), Icon(Icons.delete_forever_rounded, color: Colors.redAccent,),],)],),) : null
+            ),
           ),
         );
       },
@@ -382,5 +379,6 @@ class ProfileState extends State<ProfilePage> {
     final f = await ImagePicker().pickImage(source: source, maxWidth: 500, maxHeight: 500);
     final File file = File(f!.path);
     FirebaseHandler().modifyPicture(file);
+    Navigator.pop(context);
   }
 }

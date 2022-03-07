@@ -58,7 +58,7 @@ class ListTalkState extends State<ListTalk>{
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("chat").doc(idGroup).collection("talk").snapshots(),
         builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && peerUid == "" && peerUid == null) {
             List<Talk> talks = [];
             snapshot.data!.docs.forEach((talk) {
               talks.add(Talk(talk));

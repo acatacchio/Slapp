@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:slapp/page/profile_page.dart';
 import 'package:slapp/util/firebase_handler.dart';
 import '../custom_widget/my_gradient.dart';
 import '../model/Member.dart';
@@ -57,37 +58,42 @@ class MemberListState extends State<MemberList>{
   memberItem(Member? member, double imageSize){
     return Column(
       children: [
-        Row(
-          children: [
-            Container(
-                height: imageSize,
-                width: imageSize,
-                decoration: MyGradient(startColor: ColorTheme().blue(), endColor: ColorTheme().blueGradiant(), diagonal: true, radius: imageSize),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.5),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(imageSize),
-                        color: ColorTheme().background(),
-                        image: DecorationImage(
-                            image: (member!.imageUrl != null && member.imageUrl != "")
-                                ? CachedNetworkImageProvider(member.imageUrl)
-                                : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover
-                        )
+        InkWell(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage(member: member, redirect: true,)));
+          },
+          child: Row(
+            children: [
+              Container(
+                  height: imageSize,
+                  width: imageSize,
+                  decoration: MyGradient(startColor: ColorTheme().blue(), endColor: ColorTheme().blueGradiant(), diagonal: true, radius: imageSize),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(imageSize),
+                          color: ColorTheme().background(),
+                          image: DecorationImage(
+                              image: (member!.imageUrl != null && member.imageUrl != "")
+                                  ? CachedNetworkImageProvider(member.imageUrl)
+                                  : AssetImage(avatar) as ImageProvider, fit: BoxFit.cover
+                          )
+                      ),
                     ),
-                  ),
-                )
-            ),
-            const SizedBox(width: 5,),
-            Text("${member.name} ${member.surname}", style: TextStyle(color: ColorTheme().text()),),
-            const Spacer(),
-            TextButton(
-              onPressed: (){
-                FirebaseHandler().addOrRemoveFollow(member);
-              },
-              child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre", style: TextStyle(color: (member.followers!.contains(myId)) ? ColorTheme().textGrey() : ColorTheme().blueGradiant()),),
-            )
-          ],
+                  )
+              ),
+              const SizedBox(width: 5,),
+              Text("${member.name} ${member.surname}", style: TextStyle(color: ColorTheme().text()),),
+              const Spacer(),
+              TextButton(
+                onPressed: (){
+                  FirebaseHandler().addOrRemoveFollow(member);
+                },
+                child: Text((member.followers != null) ? (member.followers!.contains(myId) ? "Ne plus suivre" : "Suivre") : "Suivre", style: TextStyle(color: (member.followers!.contains(myId)) ? ColorTheme().textGrey() : ColorTheme().blueGradiant()),),
+              )
+            ],
+          ),
         ),
         const SizedBox(height: 10,)
       ],

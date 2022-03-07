@@ -31,7 +31,7 @@ class FirebaseHandler {
   }
 
   //Création User
-  Future<User?> createUser(String mail, String pwd, String name, String surname) async {
+  Future<User?> createUser(String mail, String pwd, String name, String surname, String proposer) async {
     final userCredential = await authInstance.createUserWithEmailAndPassword(
         email: mail,
         password: pwd
@@ -42,11 +42,13 @@ class FirebaseHandler {
       surnameKey: surname,
       imageUrlKey: "",
       followersKey: [],
-      followingKey: [],
+      followingKey: [proposer],
       uidKey: user?.uid
     };
     //AddUser
     addUserToFirebase(memberMap);
+    fire_proposing.doc(proposer).update({"memberSponsor": FieldValue.arrayUnion([user?.uid])});
+    fire_user.doc(proposer).update({followersKey: FieldValue.arrayUnion([user?.uid])});
     return user;
   }
 
@@ -59,6 +61,7 @@ class FirebaseHandler {
   final fire_user = firestoreInstance.collection(memberRef);
   final fire_notif = firestoreInstance.collection("notification");
   final fire_chat = firestoreInstance.collection("chat");
+  final fire_proposing = firestoreInstance.collection("proposing");
 
   //Storage
   static final storageRef = storage.FirebaseStorage.instance.ref();
@@ -207,7 +210,5 @@ class FirebaseHandler {
       AlertHelper().showSnackBar(e.message!, context);
       Navigator.of(context).pop();
     }
-
-
   }
 }

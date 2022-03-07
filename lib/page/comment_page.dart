@@ -5,6 +5,7 @@ import '../custom_widget/my_gradient.dart';
 import '../custom_widget/my_text_field.dart';
 import '../model/Member.dart';
 import '../model/color_theme.dart';
+import '../model/generic_method.dart';
 import '../model/member_comment.dart';
 import '../model/post.dart';
 import '../util/constants.dart';
@@ -49,24 +50,25 @@ class CommentPageState extends State<CommentPage>{
           backgroundColor: ColorTheme().background(),
           elevation: 0,
         ),
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            children: [
-              Column(
-                children: [
-                  description(),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height-264,
-                    child: commentsList(),
-                  )
-                ],
-              ),
-              input(),
-              const SizedBox(height: 20,)
-            ],
-          ),
-        )
+        body: SingleChildScrollView(
+            child: InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: (){
+                  GenericMethod().hideKeyboard(context);
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Column(
+                        children: [
+                          description(),
+                          commentsList(),
+                          input()
+                        ],
+                    )
+                ),
+            ),
+          )
     );
   }
 
@@ -126,30 +128,31 @@ class CommentPageState extends State<CommentPage>{
             comments.add(MemberComment((s)));
           });
         }
-        return ListView.builder(
-            itemCount: comments.length,
-            itemBuilder: (context, index) {
-              MemberComment comment = comments[index];
-              return StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseHandler().fire_user.doc(comment.memberId).snapshots(),
-                  builder: (context, snap) {
-                    if (snap.hasData){
-                      Member member = Member(snap.data!);
-                      return commentsCard(member: member, comment: comment);
-                    } else {
-                      return const SizedBox(height: 0, width: 0,);
-                    }
-                  });
-            }
+        return SizedBox(
+          height: MediaQuery.of(context).size.height - 280,
+          child: ListView.builder(
+              itemCount: comments.length,
+              itemBuilder: (context, index) {
+                MemberComment comment = comments[index];
+                return StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseHandler().fire_user.doc(comment.memberId).snapshots(),
+                    builder: (context, snap) {
+                      if (snap.hasData){
+                        Member member = Member(snap.data!);
+                        return commentsCard(member: member, comment: comment);
+                      } else {
+                        return const SizedBox(height: 0, width: 0,);
+                      }
+                    });
+              }
+          ),
         );
       },
     );
   }
 
   commentsCard({required Member member, required MemberComment comment}){
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: SizedBox(
+    return SizedBox(
         child: Row(
           children: [
             Container(
@@ -190,17 +193,14 @@ class CommentPageState extends State<CommentPage>{
             )
           ],
         ),
-      )
-    );
+      );
   }
 
   input(){
-    return Padding(
-      padding: const EdgeInsets.all(5),
-      child: Row(
+    return Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width - 74,
+            width: MediaQuery.of(context).size.width - 84,
             child: MyTextField(controller: _controller, hint: "Ajouter un commentaire ...",),
           ),
           TextButton(
@@ -213,7 +213,6 @@ class CommentPageState extends State<CommentPage>{
               child: Icon(Icons.send, color: ColorTheme().blueGradiant(), size: 30,)
           )
         ],
-      ),
     );
   }
 }
