@@ -21,36 +21,39 @@ class ListTalk extends StatefulWidget {
 }
 
 class ListTalkState extends State<ListTalk>{
-
+  int i = 0;
   String myId = FirebaseHandler().authInstance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorTheme().background(),
-      appBar: AppBar(
-        title: const Text("Conversations"),
-        backgroundColor: ColorTheme().background(),
-        elevation: 0,
-      ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance.collection("member").doc(widget.member!.uid).snapshots(),
-        builder: (BuildContext context, snaps) {
-          if(snaps.hasData){
-            return ListView.builder(
-              itemBuilder: (BuildContext ctx, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: talkContent(getIdChat(widget.member!.uid, Member(snaps.data!).talks?[index]), Member(snaps.data!).talks?[index], index),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Text("Conversations", style: TextStyle(fontSize: 20, color: ColorTheme().text()),),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height - 173,
+          child: StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance.collection("member").doc(widget.member!.uid).snapshots(),
+            builder: (BuildContext context, snaps) {
+              if(snaps.hasData){
+                return ListView.builder(
+                  itemBuilder: (BuildContext ctx, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: talkContent(getIdChat(widget.member!.uid, Member(snaps.data!).talks?[index]), Member(snaps.data!).talks?[index], index),
+                    );
+                  },
+                  itemCount: Member(snaps.data!).talks?.length,
                 );
-              },
-              itemCount: Member(snaps.data!).talks?.length,
-            );
-          } else {
-            return const SizedBox();
-          }
-        },
-      )
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
+        )
+      ]
     );
   }
 
@@ -58,17 +61,17 @@ class ListTalkState extends State<ListTalk>{
     return StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("chat").doc(idGroup).collection("talk").snapshots(),
         builder: (BuildContext context, snapshot) {
-          if (snapshot.hasData && peerUid == "" && peerUid == null) {
+          if (snapshot.hasData && peerUid != null) {
             List<Talk> talks = [];
-            snapshot.data!.docs.forEach((talk) {
+            for (var talk in snapshot.data!.docs) {
               talks.add(Talk(talk));
-            });
-            talks.sort((a, b) => b.date.compareTo(a.date));
+            }
+            talks.sort((a, b) => b.intDate.compareTo(a.intDate));
             return StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance.collection("member").doc(peerUid).snapshots(),
-                builder: (BuildContext context, snapshot) {
-                  if(snapshot.hasData){
-                    Member peer = Member(snapshot.data!);
+                builder: (BuildContext context, snap) {
+                  if(snap.hasData){
+                    Member peer = Member(snap.data!);
                     return InkWell(
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
@@ -98,26 +101,26 @@ class ListTalkState extends State<ListTalk>{
                           ),
                           const SizedBox(width: 10,),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width - 60,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("${peer.name!} ${peer.surname!}", style: TextStyle(color: ColorTheme().text(), fontSize: 16),),
-                                    Text(talks[0].date, style: TextStyle(color: ColorTheme().textGrey(),),)
-                                  ],
-                                ),
-                              ),
-                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  (talks[0].userId == widget.member!.uid) ? Text("Vous : ", style: TextStyle(color: ColorTheme().textGrey(),),) : Text("${peer.name!} : ", style: TextStyle(color: ColorTheme().textGrey(),),),
-                                  Text(talks[0].text, style: TextStyle(color: ColorTheme().textGrey(),),)
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width - 60,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("${peer.name!} ${peer.surname!}", style: TextStyle(color: ColorTheme().text(), fontSize: 16),),
+                                        Text(talks[0].date, style: TextStyle(color: ColorTheme().textGrey(),),)
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      (talks[0].userId == widget.member!.uid) ? Text("Vous : ", style: TextStyle(color: ColorTheme().textGrey(),),) : Text("${peer.name!} : ", style: TextStyle(color: ColorTheme().textGrey(),),),
+                                      Text(talks[0].text, style: TextStyle(color: ColorTheme().textGrey(),),)
+                                    ],
+                                  )
                                 ],
-                              )
-                            ],
-                          )
+                          ),
                         ],
                       ),
                     );

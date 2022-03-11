@@ -45,10 +45,13 @@ class FirebaseHandler {
       followingKey: [proposer],
       uidKey: user?.uid
     };
+    String u = user!.uid;
+
     //AddUser
     addUserToFirebase(memberMap);
-    fire_proposing.doc(proposer).update({"memberSponsor": FieldValue.arrayUnion([user?.uid])});
-    fire_user.doc(proposer).update({followersKey: FieldValue.arrayUnion([user?.uid])});
+    fire_proposing.doc(proposer).update({"memberSponsor": FieldValue.arrayUnion([user.uid])});
+    fire_proposing.doc(user.uid).set({"proposingLink": "${u[0]}${u[1]}${u[2]}${u[3]}${u[4]}${u[5]}${u[6]}${u[7]}${u[8]}${u[9]}${u[10]}"});
+    fire_user.doc(proposer).update({followersKey: FieldValue.arrayUnion([user.uid])});
     return user;
   }
 
